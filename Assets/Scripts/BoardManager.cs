@@ -31,7 +31,7 @@ public class BoardManager : MonoBehaviour
 	public GameObject[] enemy;
 
 	private Transform boardHolder;
-	private Dictionary<Vector2, Vector2> gridPositions = new Dictionary<Vector2, Vector2> ();
+	public Dictionary<Vector2, Vector2> gridPositions = new Dictionary<Vector2, Vector2> ();
 	
 	private Transform dungeonBoardHolder;
 

@@ -9,8 +9,9 @@ public class Chest : MonoBehaviour {
 	public Weapon weapon;
 
 	private SpriteRenderer spriteRenderer;
+    [SerializeField] private float ExperienciaDeDerrota;
 
-	void Awake () {
+    void Awake () {
 		spriteRenderer = GetComponent<SpriteRenderer> ();
 	}
 
@@ -18,11 +19,14 @@ public class Chest : MonoBehaviour {
 		spriteRenderer.sprite = openSprite;
 
 		GameObject toInstantiate;
-
-		if (Random.Range (0, 2) == 1) {
+        Transform target;
+        target = GameObject.FindGameObjectWithTag("Player").transform;
+        target.GetComponent<Player>().SubirDeNivel(ExperienciaDeDerrota);
+        if (Random.Range (0, 2) == 1) {
 			randomItem.RandomItemInit ();
 			toInstantiate = randomItem.gameObject;
-		} else {
+		} 
+		else {
 			toInstantiate = weapon.gameObject;
 		}
 		GameObject instance = Instantiate (toInstantiate, new Vector3 (transform.position.x, transform.position.y, 0f), Quaternion.identity) as GameObject;

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using NUnit;
+using UnityEngine.UIElements;
 
 public class Enemy : MovingObject
 {
@@ -13,9 +15,13 @@ public class Enemy : MovingObject
 	
 	private SpriteRenderer spriteRenderer;
 	[SerializeField] private GameObject[] Food;
+    [SerializeField] private float ExperienciaDeDerrota;
 
-	protected override void Start () {
+	private BoardManager boardManager;
+
+    protected override void Start () {
 		GameManager.instance.AddEnemyToList (this);
+		boardManager = GameManager.instance.gameObject.GetComponent<BoardManager> ();
 
 		animator = GetComponent<Animator> ();
 
@@ -59,29 +65,42 @@ public class Enemy : MovingObject
 					xDir = -1; yDir = 0;
 				}
 				else if (moveOnX == true && xHeading > 0) {
-					xDir = 1; yDir = 0;
+					xDir = +1; yDir = 0;
 				}
 				else if (moveOnX == false && yHeading < 0) {
 					yDir = -1; xDir = 0;
 				}
 				else if (moveOnX == false && yHeading > 0) {
-					yDir = 1; xDir = 0;
+					yDir = +1; xDir = 0;
 				}
 
 				Vector2 start = transform.position;
 				Vector2 end = start + new Vector2 (xDir, yDir);
 				base.boxCollider.enabled = false;
-				RaycastHit2D hit = Physics2D.Linecast (start, end, base.blockingLayer);
+				RaycastHit2D hit = Physics2D.Linecast (start, end, base.blockingLayer); 
 				base.boxCollider.enabled = true;
-
-				if (hit.transform != null) {
-					if (hit.transform.gameObject.tag == "Wall" || hit.transform.gameObject.tag == "Chest") {
+				if (hit.transform != null) 
+				{
+					if (hit.transform.gameObject.tag == "Wall" || hit.transform.gameObject.tag == "Chest") 
+					{
 						if (moveOnX == true)
 							moveOnX = false;
 						else 
 							moveOnX = true;
-					} else {
-						break;
+					} 
+					else 
+					{
+						if (boardManager.gridPositions.ContainsKey(end))
+						{
+							break;
+						}
+						else
+						{
+                            if (moveOnX == true)
+                                moveOnX = false;
+                            else
+                                moveOnX = true;
+                        }
 					}
 				}
 			}
@@ -94,7 +113,10 @@ public class Enemy : MovingObject
 			else
 				xDir = target.position.x > transform.position.x ? 1 : -1;
 		}
-		AttemptMove <Player> (xDir, yDir);
+        if (boardManager.gridPositions.ContainsKey(new Vector2 (transform.position.x +xDir, transform.position.y +yDir)))
+        {
+            AttemptMove<Player>(xDir, yDir);
+        }
 	}
 
 	protected override void OnCantMove <T> (T component) {
@@ -119,7 +141,7 @@ public class Enemy : MovingObject
 				GameObject toinstance = Food[Random.Range(0, Food.Length)];
 				Instantiate(toinstance, gameObject.transform.position, Quaternion.identity);
 			}
-			target.GetComponent<Player>().SubirDeNivel(1);
+			target.GetComponent<Player>().SubirDeNivel(ExperienciaDeDerrota);
 			GameManager.instance.RemoveEnemyFromList (this);
 			Destroy (gameObject);
 		}

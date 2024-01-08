@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
 		StartCoroutine (MoveEnemies ());
 	}
 	
-	public void AddEnemyToList(Enemy script) {
+	public void AddEnemyToList(Enemy script ) {
 		enemies.Add(script);
 	}
 

@@ -8,8 +8,9 @@ public class Wall : MonoBehaviour {
 	public GameObject[] foodTiles;
 
 	private SpriteRenderer spriteRenderer;
+    [SerializeField] private float ExperienciaDeDerrota;
 
-	void Awake () {
+    void Awake () {
 		spriteRenderer = GetComponent<SpriteRenderer> ();
 	}
 
@@ -19,11 +20,14 @@ public class Wall : MonoBehaviour {
 		hp -= loss;
 
 		if (hp <= 0) {
-			if (Random.Range (0,5) == 1) {
+            Transform target;
+            target = GameObject.FindGameObjectWithTag("Player").transform;
+            target.GetComponent<Player>().SubirDeNivel(ExperienciaDeDerrota);
+            if (Random.Range (0,5) == 1) {
 				GameObject toInstantiate = foodTiles [Random.Range (0, foodTiles.Length)];
 				GameObject instance = Instantiate (toInstantiate, new Vector3 (transform.position.x, transform.position.y, 0f), Quaternion.identity) as GameObject;
 				instance.transform.SetParent (transform.parent);
-			}
+            }
 
 			gameObject.SetActive (false);
 		}

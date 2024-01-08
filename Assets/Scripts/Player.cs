@@ -229,7 +229,7 @@ public class Player : MovingObject {
 		if (wallDamage >= 20 && levelMod >10)
 			GameManager.instance.enemySpawnRatio = 10;
 	}
-	public void SubirDeNivel(int sumaDeXp)
+	public void SubirDeNivel(float sumaDeXp)
 	{
 		xpActual += sumaDeXp;
 		if(xpActual >= xpNecesario)
