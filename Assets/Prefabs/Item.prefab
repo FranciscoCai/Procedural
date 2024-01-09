@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: -3789265473035559870, guid: fbc9fb0cf3e5c7e48931e5ec88678213,
     type: 3}
-  m_Color: {r: 0, g: 0, b: 1, a: 1}
+  m_Color: {r: 0, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -102,9 +102,9 @@ MonoBehaviour:
   glove: {fileID: -3789265473035559870, guid: fbc9fb0cf3e5c7e48931e5ec88678213, type: 3}
   boot: {fileID: -5933920342725891400, guid: fbc9fb0cf3e5c7e48931e5ec88678213, type: 3}
   type: 0
-  level: {r: 0, g: 0, b: 1, a: 1}
-  attackMod: 5
-  defenseMod: 2
+  level: {r: 0, g: 1, b: 0, a: 1}
+  attackMod: 7
+  defenseMod: 5
 --- !u!61 &3731266751528350275
 BoxCollider2D:
   m_ObjectHideFlags: 0

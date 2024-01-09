@@ -20,7 +20,7 @@ public class ScapeEnemy : MovingObject
 
     protected override void Start()
     {
-        GameManager.instance.AddEnemyToList(this);
+        //GameManager.instance.AddEnemyToList(this);
         boardManager = GameManager.instance.gameObject.GetComponent<BoardManager>();
 
         animator = GetComponent<Animator>();
@@ -55,7 +55,6 @@ public class ScapeEnemy : MovingObject
 
         if (GameManager.instance.enemiesSmarter)
         {
-            Debug.Log(1111);
             // Miramos en cuantas direcciones nos tenemos que mover
             int xHeading = (int)target.position.x - (int)transform.position.x;
             int yHeading = (int)target.position.y - (int)transform.position.y;
@@ -161,7 +160,7 @@ public class ScapeEnemy : MovingObject
                 Instantiate(toinstance, gameObject.transform.position, Quaternion.identity);
             }
             target.GetComponent<Player>().SubirDeNivel(ExperienciaDeDerrota);
-            GameManager.instance.RemoveEnemyFromList(this);
+            //GameManager.instance.RemoveEnemyFromList(this);
             Destroy(gameObject);
         }
     }

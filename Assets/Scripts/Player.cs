@@ -25,10 +25,15 @@ public class Player : MovingObject {
 	private int health;
 	private Dictionary<String, Item> inventory;
 	private Weapon weapon;
+	public static Player instance;
 	[SerializeField] private float xpNecesario;
     [SerializeField] private float xpActual;
     [SerializeField] private Image XPCanvas;
-	protected override void Start () {
+    private void Awake()
+    {
+        instance = this;
+    }
+    protected override void Start () {
 		animator = GetComponent<Animator>();
 		
 		health = GameManager.instance.healthPoints;
@@ -238,11 +243,19 @@ public class Player : MovingObject {
 		xpNecesario++;
 
 		levelMod++;
-		levelText.text = "Level: " + levelMod;
+
         GameManager.instance.playerLevel = levelMod;
 		UpdateStatistic();
 		}
-        XPCanvas.fillAmount = xpActual/xpNecesario;
+		if (xpActual >= xpNecesario)
+		{
+			SubirDeNivel(0);
+		}
+		else
+		{
+            levelText.text = "Level: " + levelMod;
+            XPCanvas.fillAmount = xpActual / xpNecesario;
+		}
 
 
     }
