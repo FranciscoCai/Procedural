@@ -953,6 +953,28 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5329273113998593336, guid: 1ca8c6e960c494bbd937610290f80d1b,
+        type: 3}
+      propertyPath: ayudaPlayer
+      value: 
+      objectReference: {fileID: 2697487764661881271, guid: a2c01ba154cfc204eac2e52ad31f923f,
+        type: 3}
+    - target: {fileID: -5329273113998593336, guid: 1ca8c6e960c494bbd937610290f80d1b,
+        type: 3}
+      propertyPath: powerRecolocar
+      value: 
+      objectReference: {fileID: 8889487775250244586, guid: 3b4c7c9739689ac4cbc7d3de6f039460,
+        type: 3}
+    - target: {fileID: -5329273113998593336, guid: 1ca8c6e960c494bbd937610290f80d1b,
+        type: 3}
+      propertyPath: enemy.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -5329273113998593336, guid: 1ca8c6e960c494bbd937610290f80d1b,
+        type: 3}
+      propertyPath: 'enemy.Array.data[3]'
+      value: 
+      objectReference: {fileID: 195068, guid: d86c32391c87d5b4a89e843076b24a1b, type: 3}
     - target: {fileID: 133658, guid: 1ca8c6e960c494bbd937610290f80d1b, type: 3}
       propertyPath: m_Name
       value: GameManager
@@ -1003,7 +1025,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11433656, guid: 1ca8c6e960c494bbd937610290f80d1b, type: 3}
       propertyPath: playerLevel
-      value: 11
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1387,6 +1409,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Exit
+      objectReference: {fileID: 0}
+    - target: {fileID: 388131115308032914, guid: c8054cb69f3380a42a314ee8f7e90759,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3999780232385548986, guid: c8054cb69f3380a42a314ee8f7e90759,
         type: 3}

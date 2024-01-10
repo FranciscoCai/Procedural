@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Random = UnityEngine.Random;
 
 public enum TileType {
-	essential, random, empty, chest, enemy // Nuevo tipo de casilla
+	essential, random, empty, chest, enemy, recolocar, ayuda// Nuevo tipo de casilla
 }
 
 public class DungeonManager : MonoBehaviour {
@@ -148,7 +148,17 @@ public class DungeonManager : MonoBehaviour {
 
 					if (Random.Range (0, 70) == 1) {
 						gridPositions.Add (chamberTilePos, TileType.chest);
-					} else {
+					} 
+					else if(Random.Range(0, 70) == 1)
+					{
+                        gridPositions.Add(chamberTilePos, TileType.recolocar);
+                    }
+                    else if (Random.Range(0, 20) == 1)
+                    {
+                        gridPositions.Add(chamberTilePos, TileType.ayuda);
+                    }
+                    else
+                    {
 						gridPositions.Add (chamberTilePos, TileType.empty);
 					}
 				}

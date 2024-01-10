@@ -5,7 +5,10 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-	public float turnDelay = 0.1f;
+    public delegate void Recolocar();
+    public event Recolocar recolocarDungeon;
+
+    public float turnDelay = 0.1f;
 	public int healthPoints = 100;
     public int playerLevel = 100;
     public static GameManager instance = null;
@@ -24,7 +27,7 @@ public class GameManager : MonoBehaviour
 	private List<Enemy> enemies;
 	private bool enemiesMoving;
 	
-	private bool playerInDungeon;
+	public bool playerInDungeon;
 	public bool CoseguirArma = false;
 	void Awake() {
 		if (instance == null)
@@ -101,7 +104,7 @@ public class GameManager : MonoBehaviour
 				}
 			// Si un enemigo se sale de las casillas del mundo abierto, lo borramos
 			} else {
-				if ((!enemies[i].getSpriteRenderer().isVisible) || (!boardScript.checkValidTile (enemies[i].transform.position))) {
+				if ((!enemies[i].getSpriteRenderer().isVisible)) {
 					enemiesToDestroy.Add(enemies[i]);
 					continue;
 				}
@@ -127,11 +130,12 @@ public class GameManager : MonoBehaviour
 	}
 
 	public void enterDungeon () {
-		dungeonScript.StartDungeon ();
+        playerInDungeon = true;
+        dungeonScript.StartDungeon ();
 		boardScript.SetDungeonBoard (dungeonScript.gridPositions, dungeonScript.maxBound, dungeonScript.endPos);
 		playerScript.dungeonTransition = false;
 
-		playerInDungeon = true;
+		
 		// Destruimos todos los enemigos del mundo abierto
 		for (int i = 0; i < enemies.Count; i++) {
 			Destroy(enemies[i].gameObject);
@@ -143,8 +147,12 @@ public class GameManager : MonoBehaviour
 		boardScript.SetWorldBoard ();
 		playerScript.dungeonTransition = false;
 
-		playerInDungeon = false;
-
 		enemies.Clear ();
-	}
+		boardScript.dungeonGridPositions.Clear ();
+        playerInDungeon = false;
+    }
+	public void InvocarRecolocarEnemig()
+	{
+        recolocarDungeon?.Invoke();
+    }
 }

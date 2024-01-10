@@ -11,6 +11,8 @@ TagManager:
   - Enemy
   - Wall
   - Chest
+  - RecolocarEnemigo
+  - Ayuda
   layers:
   - Default
   - TransparentFX

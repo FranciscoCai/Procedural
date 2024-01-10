@@ -26,13 +26,17 @@ public class BoardManager : MonoBehaviour
 	public GameObject[] floorTiles;
 	public GameObject[] wallTiles;
 	public GameObject[] outerWallTiles;
-	public GameObject chestTile;
+    [SerializeField] private GameObject powerRecolocar;
+    [SerializeField] private GameObject ayudaPlayer;
+    public GameObject chestTile;
 	// Referencia al prefab del enemigo
 	public GameObject[] enemy;
 
 	private Transform boardHolder;
 	public Dictionary<Vector2, Vector2> gridPositions = new Dictionary<Vector2, Vector2> ();
-	private Transform dungeonBoardHolder;
+    public Dictionary<Vector2, Vector2> dungeonGridPositions = new Dictionary<Vector2, Vector2>();
+    public Dictionary<Vector2, GameObject> wallPositions = new Dictionary<Vector2, GameObject>();
+    private Transform dungeonBoardHolder;
 
 	public void BoardSetup () {
 		boardHolder = new GameObject ("Board").transform;
@@ -63,7 +67,8 @@ public class BoardManager : MonoBehaviour
 				toInstantiate = wallTiles[Random.Range (0,wallTiles.Length)];
 				instance = Instantiate (toInstantiate, new Vector3 (tileToAdd.x, tileToAdd.y, 0f), Quaternion.identity) as GameObject;
 				instance.transform.SetParent (boardHolder);
-			} else if (Random.Range (0, 50) == 1) {
+                wallPositions.Add(new Vector2(tileToAdd.x, tileToAdd.y), instance.gameObject);
+            } else if (Random.Range (0, 50) == 1) {
 				toInstantiate = exit;
 				instance = Instantiate (toInstantiate, new Vector3 (tileToAdd.x, tileToAdd.y, 0f), Quaternion.identity) as GameObject;
 				instance.transform.SetParent (boardHolder);
@@ -155,31 +160,53 @@ public class BoardManager : MonoBehaviour
 			toInstantiate = floorTiles [Random.Range (0, floorTiles.Length)];
 			instance = Instantiate (toInstantiate, new Vector3 (tile.Key.x, tile.Key.y, 0f), Quaternion.identity) as GameObject;
 			instance.transform.SetParent (dungeonBoardHolder);
-
-			if (tile.Value == TileType.chest) {
+            dungeonGridPositions.Add(new Vector2(tile.Key.x, tile.Key.y), new Vector2(tile.Key.x, tile.Key.y));
+            if (tile.Value == TileType.chest) {
 				toInstantiate = chestTile;
 				instance = Instantiate (toInstantiate, new Vector3 (tile.Key.x, tile.Key.y, 0f), Quaternion.identity) as GameObject;
 				instance.transform.SetParent (dungeonBoardHolder);
-			}
-			// Si se ha indicado un enemigo
-			else if (tile.Value == TileType.enemy) {
+                dungeonGridPositions.Remove(new Vector2(tile.Key.x, tile.Key.y));
+            }
+			else if (tile.Value == TileType.recolocar)
+            {
+                toInstantiate = powerRecolocar;
+                instance = Instantiate(toInstantiate, new Vector3(tile.Key.x, tile.Key.y, 0f), Quaternion.identity) as GameObject;
+                instance.transform.SetParent(dungeonBoardHolder);
+                dungeonGridPositions.Remove(new Vector2(tile.Key.x, tile.Key.y));
+            }
+            else if (tile.Value == TileType.ayuda)
+            {
+                toInstantiate = ayudaPlayer;
+                instance = Instantiate(toInstantiate, new Vector3(tile.Key.x, tile.Key.y, 0f), Quaternion.identity) as GameObject;
+                instance.transform.SetParent(dungeonBoardHolder);
+                dungeonGridPositions.Remove(new Vector2(tile.Key.x, tile.Key.y));
+            }
+
+            // Si se ha indicado un enemigo
+            else if (tile.Value == TileType.enemy) {
 				if (GameManager.instance.CoseguirArma == true)
 				{
 					int maximoIntanciaEnemigo = Convert.ToInt32(Math.Min(GameManager.instance.playerLevel, 60f));
 					int numeroDeInstancia = Random.Range(maximoIntanciaEnemigo, 100);
                     if (numeroDeInstancia> 75)
                     {
-                        toInstantiate = enemy[2];
+                        toInstantiate = enemy[3];
                         instance = Instantiate(toInstantiate, new Vector3(tile.Key.x, tile.Key.y, 0f), Quaternion.identity) as GameObject;
                         instance.transform.SetParent(dungeonBoardHolder);
                     }
                     else if(numeroDeInstancia > 50)
                     {
+                        toInstantiate = enemy[2];
+                        instance = Instantiate(toInstantiate, new Vector3(tile.Key.x, tile.Key.y, 0f), Quaternion.identity) as GameObject;
+                        instance.transform.SetParent(dungeonBoardHolder);
+                    }
+                    else if (numeroDeInstancia > 25)
+                    {
                         toInstantiate = enemy[1];
                         instance = Instantiate(toInstantiate, new Vector3(tile.Key.x, tile.Key.y, 0f), Quaternion.identity) as GameObject;
                         instance.transform.SetParent(dungeonBoardHolder);
                     }
-					else
+                    else
 					{
                         toInstantiate = enemy[0];
                         instance = Instantiate(toInstantiate, new Vector3(tile.Key.x, tile.Key.y, 0f), Quaternion.identity) as GameObject;

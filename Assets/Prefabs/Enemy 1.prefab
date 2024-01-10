@@ -202,8 +202,10 @@ MonoBehaviour:
   boxCollider: {fileID: 6195068}
   playerDamage: 15
   hp: 5
+  RangoDeHP: 0f00000019000000
   Food:
   - {fileID: 8889487775250244586, guid: bbe283bd3598579408650e8098ee15a1, type: 3}
   - {fileID: 1161832617350679675, guid: b5a5fe04a50e7de4b8d5e24edaaeeb46, type: 3}
   ExperienciaDeDerrota: 3
-  type: 1
+  Weapon: {fileID: 8082631568189422917, guid: 51db9d6c605b2744b9e2adb5d9d7b5e2, type: 3}
+  type: 0

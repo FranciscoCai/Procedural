@@ -408,6 +408,6 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   incrementVelocity: 0
   limiteAzul: 1
-  limiteVerde: 3
-  limitePurpura: 5
-  limiteAmarilla: 7
+  limiteVerde: 5
+  limitePurpura: 15
+  limiteAmarilla: 25

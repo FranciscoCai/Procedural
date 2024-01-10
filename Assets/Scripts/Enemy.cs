@@ -1,14 +1,17 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum EnemyType
 {
-    scape, attack
+    scape, attack, elite, diferentLevel
 }
 public class Enemy : MovingObject
 {
     public int playerDamage;
     public int hp = 20;
-
+    [SerializeField] private int[] RangoDeHP;
     private Animator animator;
     private Transform target;
     // Controla si se mueven cada dos turnos
@@ -19,21 +22,88 @@ public class Enemy : MovingObject
     [SerializeField] private float ExperienciaDeDerrota;
 
     private BoardManager boardManager;
+    [SerializeField] private GameObject Weapon;
     public EnemyType type;
+    public Color level;
     protected override void Start()
     {
         GameManager.instance.AddEnemyToList(this);
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        switch (type)
+        {
+            case EnemyType.diferentLevel:
+                NivelDependiendoDeLaVida();
+                break;
+                default:
+                hp = Random.Range(RangoDeHP[0], RangoDeHP[1] + 1);
+                break;
+        }
         boardManager = GameManager.instance.gameObject.GetComponent<BoardManager>();
 
         animator = GetComponent<Animator>();
 
         target = GameObject.FindGameObjectWithTag("Player").transform;
 
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        
 
+        if(GameManager.instance.playerInDungeon)
+        {
+            GameManager.instance.recolocarDungeon += enemigoRecolocar;
+        }
         base.Start();
     }
+    private void NivelDependiendoDeLaVida()
+    {
+        int maximoIntanciaEnemigo = Convert.ToInt32(Math.Min(GameManager.instance.playerLevel, 60f));
+        int randomLevel = Random.Range(maximoIntanciaEnemigo, 100);
+        if (randomLevel >= 0 && randomLevel < 50)
+        {
+            spriteRenderer.color = level = Color.blue;
+            hp = Random.Range(RangoDeHP[0], RangoDeHP[1]);
+        }
+        else if (randomLevel >= 50 && randomLevel < 75)
+        {
+            spriteRenderer.color = level = Color.green;
+            hp = Random.Range(RangoDeHP[0], RangoDeHP[1] )+ 10;
+        }
+        else if (randomLevel >= 75 && randomLevel < 90)
+        {
+            spriteRenderer.color = level = Color.yellow;
+            hp = Random.Range(RangoDeHP[0], RangoDeHP[1] )+ 15;
+        }
+        else
+        {
+            spriteRenderer.color = level = Color.black;
+            hp = Random.Range(RangoDeHP[0], RangoDeHP[1] )+ 20;
+        }
+    }
+    public void enemigoRecolocar()
+    {
+        List<Vector2> keys = new List<Vector2>(boardManager.dungeonGridPositions.Keys);
+        if (keys.Count > 0)
+        {
 
+            int randomIndex = Random.Range(0, keys.Count);
+
+            Vector2 randomVector = keys[randomIndex];
+
+            gameObject.transform.position = randomVector;
+        }
+    }
+    private void OnDestroy()
+    {
+        if (GameManager.instance.playerInDungeon)
+        {
+            GameManager.instance.recolocarDungeon -= enemigoRecolocar;
+        }
+    }
+    private void OnDisable()
+    {
+        if (GameManager.instance.playerInDungeon)
+        {
+            GameManager.instance.recolocarDungeon -= enemigoRecolocar;
+        }
+    }
     protected override bool AttemptMove<T>(int xDir, int yDir)
     {
         // Si se mueven cada dos turnos o cada uno
@@ -107,7 +177,7 @@ public class Enemy : MovingObject
                         {
                             yDir = +1; xDir = 0;
                         }
-                        break;  
+                        break;
                 }
 
                 Vector2 start = transform.position;
@@ -126,7 +196,7 @@ public class Enemy : MovingObject
                     }
                     else
                     {
-                        if (boardManager.gridPositions.ContainsKey(end)|| !Player.instance.onWorldBoard)
+                        if (boardManager.gridPositions.ContainsKey(end) || !Player.instance.onWorldBoard)
                         {
                             break;
                         }
@@ -151,7 +221,41 @@ public class Enemy : MovingObject
             else
                 xDir = target.position.x > transform.position.x ? 1 : -1;
         }
-        if (boardManager.gridPositions.ContainsKey(new Vector2(transform.position.x + xDir, transform.position.y + yDir))|| !Player.instance.onWorldBoard)
+        if (!GameManager.instance.playerInDungeon)
+        {
+            switch (type)
+            {
+                case EnemyType.elite:
+                    for (int x = 0; x < 3; x++)
+                    {
+                        for (int y = 0; y < 3; y++)
+                        {
+                            int enemyX = x + (int)gameObject.transform.position.x - 1;
+                            int enemyY = y + (int)gameObject.transform.position.y - 1;
+                            Vector3 VectorInstance = new Vector3(enemyX, enemyY, 0);
+                            /*(if (boardManager.gridPositions.ContainsKey(VectorInstance) && VectorInstance != gameObject.transform.position && !boardManager.wallPositions.ContainsKey(VectorInstance) && gameObject.transform.position!= Player.instance.gameObject.transform.position)
+                            {
+                                GameObject toInstantiate = boardManager.wallTiles[Random.Range(0, boardManager.wallTiles.Length)];
+                                GameObject instance = Instantiate(toInstantiate, VectorInstance, Quaternion.identity) as GameObject;
+                                instance.transform.SetParent(transform.parent);
+                                boardManager.wallPositions.Add(VectorInstance, VectorInstance);
+                            }
+                            else */
+                          
+                            if (boardManager.wallPositions.TryGetValue(VectorInstance, out GameObject wallObject))
+                            {
+                                Wall wallComponent = wallObject.GetComponent<Wall>();
+                                wallComponent.DamageWall(wallComponent.hp);
+                            }
+                        }
+                    }
+                    break;
+                default:
+
+                    break;
+            }
+        }
+        if (boardManager.gridPositions.ContainsKey(new Vector2(transform.position.x + xDir, transform.position.y + yDir)) || !Player.instance.onWorldBoard)
         {
             AttemptMove<Player>(xDir, yDir);
         }
@@ -160,6 +264,23 @@ public class Enemy : MovingObject
     protected override void OnCantMove<T>(T component)
     {
         Player hitPlayer = component as Player;
+        /*switch (type)
+        {
+            case EnemyType.elite:
+                for (int x = 0; x < 3; x++)
+                {
+                    for (int y = 0; y < 3; y++)
+                    {
+                        int playerX = x + (int)hitPlayer.gameObject.transform.position.x - 1;
+                        int playerY = y + (int)hitPlayer.gameObject.transform.position.y - 1;
+                        Vector3 VectorInstance = new Vector3(playerX, playerX, 0);
+                        
+                    }
+                }
+                break;
+            default:
+                break;
+        }*/
 
         hitPlayer.LoseHealth(playerDamage);
 
@@ -180,8 +301,19 @@ public class Enemy : MovingObject
         {
             if (Random.Range(0, 2) == 0)
             {
-                GameObject toinstance = Food[Random.Range(0, Food.Length)];
-                Instantiate(toinstance, gameObject.transform.position, Quaternion.identity);
+                GameObject toinstance = Instantiate(Food[Random.Range(0, Food.Length)], gameObject.transform.position, Quaternion.identity);
+                toinstance.transform.SetParent(transform.parent);
+
+            }
+            switch (type)
+            {
+                case EnemyType.scape:
+                    GameObject toinstance = Instantiate(Weapon, gameObject.transform.position, Quaternion.identity);
+                    toinstance.transform.SetParent(transform.parent);
+                    break;
+                default:
+
+                    break;
             }
             target.GetComponent<Player>().SubirDeNivel(ExperienciaDeDerrota);
             GameManager.instance.RemoveEnemyFromList(this);

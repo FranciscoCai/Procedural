@@ -30,19 +30,19 @@ public class Weapon : MonoBehaviour {
 
         if (randomLevel >= 0 && randomLevel < limiteAzul)
         {
-            WeaponPower[0] += 10;
+            WeaponPower[0] += 5;
         }
         else if (randomLevel >= limiteAzul && randomLevel < limiteVerde)
         {
-            WeaponPower[0] += 100;
+            WeaponPower[0] += 10;
         }
         else if (randomLevel >= limiteVerde && randomLevel < limitePurpura)
         {
-            WeaponPower[0] += 1000;
+            WeaponPower[0] += 20;
         }
         else
         {
-            WeaponPower[0] += 1000000;
+            WeaponPower[0] += 50;
         }
     }
     private void Start()

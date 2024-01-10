@@ -16,7 +16,8 @@ public class Wall : MonoBehaviour {
 
 	public void DamageWall (int loss) {
 
-		spriteRenderer.sprite = dmgSprite;
+            spriteRenderer.sprite = dmgSprite;
+
 		hp -= loss;
 
 		if (hp <= 0) {
@@ -26,10 +27,12 @@ public class Wall : MonoBehaviour {
             if (Random.Range (0,5) == 1) {
 				GameObject toInstantiate = foodTiles [Random.Range (0, foodTiles.Length)];
 				GameObject instance = Instantiate (toInstantiate, new Vector3 (transform.position.x, transform.position.y, 0f), Quaternion.identity) as GameObject;
-				instance.transform.SetParent (transform.parent);
+                
+                instance.transform.SetParent (transform.parent);
             }
-
-			gameObject.SetActive (false);
+            BoardManager boardManager = GameManager.instance.GetComponent<BoardManager>();
+            boardManager.wallPositions.Remove(gameObject.transform.position);
+            gameObject.SetActive (false);
 		}
 	}
 }
